@@ -1,0 +1,125 @@
+/*importing fonts for use in entire html file*/ 
+* {
+	font-family: Verdana, Lucida Sans, Arial, Helvetica, sans-serif;
+}
+
+/*Making everything centred in the body*/
+body { 
+	margin: 0px auto;
+	background-color: #222;
+}
+
+/*selecting and manipulating contatiner for the UI*/
+.contents {
+	display: flex;
+	display: -webkit-flex;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	height: 320px;
+}
+
+/*Padding and margins for watch content*/
+.content-padding {
+	margin-top: 16px;
+	margin-bottom: 16px;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+
+/*Setting fonts for watch content*/
+.content_text {
+	font-weight: bold;
+	font-size: 5em;
+	color: #fff;
+}
+
+/*manipulating lists*/
+.ui-listview .li-has-toggle .ui-toggleswitch {
+	position: absolute;
+	right: 30px;
+	top: 50%;
+	-webkit-transform: translate3d(0, -50%, 0);
+}
+
+/*manipulating lists checkboxes*/
+.ui-listview li.li-has-checkbox label, .ui-listview li.li-has-radio label,
+	.ui-listview li.li-has-toggle>label {
+	display: block;
+	padding: 31.5px 94px 31.5px 40px;
+	margin-top: -30px;
+	margin-bottom: -21px;
+	margin-left: -38px;
+	margin-right: -8px;
+}
+
+.ui-listview.ui-snap-listview li.li-has-checkbox label, .ui-listview.ui-snap-listview li.li-has-radio label,
+	.ui-listview.ui-snap-listview li.li-has-toggle>label, .ui-listview.ui-snap-listview li.li-has-thumb-right
+	{
+	padding: 27px 94px 21px 40px;
+}
+
+.ui-listview li.li-has-multiline.li-has-checkbox label, .ui-listview li.li-has-multiline.li-has-radio label,
+	.ui-listview li.li-has-multiline.li-has-toggle label:not {
+	display: block;
+	padding-bottom: 12px;
+	padding-left: 16px;
+	padding-right: 90px;
+	padding-top: 11px;
+	margin-top: -6px;
+	margin-bottom: -6px;
+	margin-left: -16px;
+	margin-right: -16px;
+}
+
+.ui-listview.ui-snap-listview li.li-has-multiline.li-has-checkbox label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-radio label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-toggle label:not
+	{
+	padding-right: 104px;
+}
+
+.ui-listview.ui-snap-listview li.li-has-multiline.li-has-checkbox label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-radio label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-toggle label:not,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-thumb-right,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-thumb-left {
+	padding-top: 27px;
+}
+
+.ui-listview li.li-has-multiline.li-has-toggle label:not {
+	padding-right: 75px;
+}
+
+.ui-listview li.li-has-thumb-right, .ui-listview li.li-has-thumb-left,
+	.ui-listview li.li-has-action-icon, .ui-listview li.li-has-toggle,
+	.ui-listview li.li-has-checkbox, .ui-listview li.li-has-radio,
+	.ui-listview li.ui-li-btn {
+	-webkit-mask-image: none;
+}
+
+.ui-listview li.li-has-checkbox label, .ui-listview li.li-has-radio label,
+	.ui-listview li.li-has-toggle>label {
+	margin-top: -17px;
+	margin-bottom: -17px;
+	margin-left: -40px;
+	margin-right: -40px;
+}
+
+.ui-listview.ui-snap-listview li.li-has-checkbox label, .ui-listview.ui-snap-listview li.li-has-radio label,
+	.ui-listview.ui-snap-listview li.li-has-toggle>label, .ui-listview.ui-snap-listview li.li-has-thumb-right
+	{
+	padding: 17px 100px 17px 30px;
+}
+
+.ui-listview .li-has-toggle .ui-toggleswitch {
+	right: 16px;
+}
+
+.ui-listview.ui-snap-listview li.li-has-multiline.li-has-checkbox label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-radio label,
+	.ui-listview.ui-snap-listview li.li-has-multiline.li-has-toggle label:not
+	{
+	display: block;
+	padding: 17px 100px 17px 30px;
+	margin: -17px -40px -17px -40px;
+}
