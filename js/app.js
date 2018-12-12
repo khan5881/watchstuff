@@ -25,7 +25,7 @@
 			 tizen.systeminfo.getPropertyValue("WIFI_NETWORK", function(e) {
 			 macAddress = e.macAddress; //get the macAddress
 			 //subscribe to macAddress based on that
-			 alert(macAddress);
+			// alert(macAddress);
 			 client.subscribe('BLEconnected/' + macAddress);
 			 })
 			client.subscribe('BLEconnected/' + macAddress);
