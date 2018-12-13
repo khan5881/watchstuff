@@ -1,8 +1,9 @@
-(function () {
+(function () { // this file basically deals with enabling the user to send data from watch. can be toggled on or off
 	
 	console.log('settings.js running...');
 	
 	var btnSensorData = document.querySelector("#btnSensorData");
+// getting the btnSensorData element and storing it in btnSensorData. 
 
     var page = document.getElementById("main"),
         listHelper,

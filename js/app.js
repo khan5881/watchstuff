@@ -1,157 +1,188 @@
 (function() {
+  console.log("app.js running...");
 
-	console.log('app.js running...');
+  //selecting all the element ids from the html file and then storing them in variables that will be used later
+  var liSettings = document.querySelector("#liSettings");
+  var liOffers = document.querySelector("#liOffers");
+  var activityDisplay = document.querySelector("#activityDisplay");
 
-	var liSettings = document.querySelector("#liSettings");
-	var liOffers = document.querySelector("#liOffers");
+  var indicatorValue = 0; // this is the variable that will be holding the calculated sensor data
+  var page = document.getElementById("main"),
+    listHelper,
+    elScroller;
+  var macAddress; // variable MACADDRESS that will be storing the watch's mac address
 
-	var indicatorValue = 0; // calculated through the sensor data
-	var activityDisplay = document.querySelector("#activityDisplay");
-	var page = document.getElementById("main"), listHelper, elScroller;
-	var macAddress;
-	// initally run an MQTT client to subscribe to check if in range of
-	// billboard
-	var wsbroker = "broker.mqttdashboard.com"; // mqtt websocket
-	// enabled broker
-	var wsport = 8000; // port for above
-	var client = new Paho.MQTT.Client(wsbroker, wsport,
-			"clientId-firstrandomstuff");
+  // initally run an MQTT client to subscribe to check if in range of
+  // billboard
 
-	var options = {
-		timeout : 3,
-		onSuccess : function() { //when connected subscibe to a topic
-			console.log("mqtt connected");
-			var macAddress;
-			 tizen.systeminfo.getPropertyValue("WIFI_NETWORK", function(e) {
-			 macAddress = e.macAddress; //get the macAddress
-			 //subscribe to macAddress based on that
-			// alert(macAddress);
-			 client.subscribe('BLEconnected/' + macAddress);
-			 })
-			client.subscribe('BLEconnected/' + macAddress);
-		},
-		onFailure : function(message) {
-			//incase MQTT fails
-			console.log("Connection failed: " + message.errorMessage);
-		}
-	};
-	//connect the client
-	client.connect(options);
+  var wsbroker = "broker.mqttdashboard.com"; // mqtt server for socket
+  var wsport = 8000; // port for above server
 
-	client.onConnectionLost = function(responseObject) {
-		//incase connection is lost
-		console.log("connection lost: " + responseObject.errorMessage);
-	};
-	//function called when message received
-	client.onMessageArrived = function onMessageArrived(message) {
-		console.log("onMessageArrived:" + message.payloadString);
-		tizen.systeminfo.getPropertyValue("WIFI_NETWORK", function(e) {
-		var macAddress = e.macAddress;
-		console.log(macAddress);
-		// this will be implemented when integrated with the watch
-		// when mobile detects beacon/billboard then publish my data
-		if (message.destinationName == 'BLEconnected/' + macAddress) {
-			alert("Billboard detected!");
-			var wsbroker = "broker.mqttdashboard.com"; // mqtt websocket
-			// enabled broker
-			var wsport = 8000; // port for above
-			var client = new Paho.MQTT.Client(wsbroker, wsport,
-					"clientId-randomstuff");
+  var client = new Paho.MQTT.Client(
+    wsbroker,
+    wsport,
+    "clientId-firstrandomstuff"
+  );
+  // in the above, we are creating a client variable that will be connecting to the
+  // MQTT broker (websocket)
 
-			var options = {
-				timeout : 3,
-				onSuccess : function() {
-					console.log("mqtt connected");
-					console.log('IndicatorValue = ' + indicatorValue);
-					msg = new Paho.MQTT.Message(JSON.stringify({
-						activityRate : indicatorValue
-					}));
-					msg.destinationName = "watch/" + macAddress;
-					client.send(msg);
-				},
-				onFailure : function(message) {
-					console.log("Connection failed: " + message.errorMessage);
-				}
-			};
+  var options = {
+    timeout: 3, // 3s before timeout
+    onSuccess: function() {
+      // if we are able to connect to MQTT
+      console.log("mqtt connected");
 
-			client.connect(options);
+      var macAddress; // create macaddress variable again (its local for this func only)
+      tizen.systeminfo.getPropertyValue("WIFI_NETWORK", function(e) {
+        macAddress = e.macAddress; //get the macAddress
 
-			client.onConnectionLost = function(responseObject) {
-				console.log("connection lost: " + responseObject.errorMessage);
-			};
+        //subscribe to macAddress based on that
+        // alert(macAddress); // this is used to check the macaddress for the watch
+        // for debugging purposes only
 
-		}
-		})
-	}
-	//changing the value of the display 
-	activityDisplay.innerHTML = indicatorValue;
+        client.subscribe("BLEconnected/" + macAddress);
+        // subscribe to the mqtt client with the topic BLEconnected/macaddress of watch
+      });
 
-	//add event listener for going back a page
-	window.addEventListener(
-					'tizenhwkey',
-					function(ev) {
-						if (ev.keyName === "back") {
-							var page = document
-									.getElementsByClassName('ui-page-active')[0], pageid = page ? page.id
-									: "";
-							if (pageid === "main") {
-								try {
-									tizen.application.getCurrentApplication()
-											.exit();
-								} catch (ignore) {
-								}
-							} else {
-								window.history.back();
-							}
-						}
-					});
+      client.subscribe("BLEconnected/" + macAddress);
+      // subscribe to the mqtt client with the topic BLEconnected/macaddress of watch
+    },
+    onFailure: function(message) {
+      // in the event that we are unable to connect to mqtt
+      console.log("Connection failed: " + message.errorMessage);
+    }
+  };
 
-	//add more even listener
-	page.addEventListener("pagebeforeshow", function(e) {
-		var list;
+  client.connect(options); //establishing connection to mqtt
 
-		elScroller = page.querySelector(".ui-scroller");
-		if (elScroller) {
-			list = elScroller.querySelector(".ui-listview");
-		}
+  client.onConnectionLost = function(responseObject) {
+    //in the event that the tizen watch loses connection to mqtt for any reasonj
+    console.log("connection lost: " + responseObject.errorMessage);
+  };
 
-		if (elScroller && list) {
-			listHelper = tau.helper.SnapListStyle.create(list, {
-				animate : "scale"
-			});
+  // when there is a message that is recieved
+  client.onMessageArrived = function onMessageArrived(message) {
+    console.log("onMessageArrived:" + message.payloadString);
+    // outputting the recieved message onto the console log
 
-			elScroller.setAttribute("tizen-circular-scrollbar", "");
-		}
-	});
+    tizen.systeminfo.getPropertyValue("WIFI_NETWORK", function(e) {
+      var macAddress = e.macAddress; // storing mac address
 
-	//another one!!!!!
-	page.addEventListener("pagebeforehide", function(e) {
-		if (listHelper) {
-			listHelper.destroy();
+      console.log(macAddress);
 
-			listHelper = null;
+      // when message destination is the same as BLEconnected/macaddress
+      if (message.destinationName == "BLEconnected/" + macAddress) {
+        alert("Billboard detected!"); // will display an alert on the tizen watch stating that
+        //mqtt message is recieved and the watch user is next to a billboard
 
-			if (elScroller) {
-				elScroller.removeAttribute("tizen-circular-scrollbar");
-			}
-		}
-	});
+        // creating another mqtt websocket
+        var wsbroker = "broker.mqttdashboard.com";
+        var wsport = 8000;
+        var client = new Paho.MQTT.Client(
+          wsbroker,
+          wsport,
+          "clientId-randomstuff"
+        );
 
-	//another one!!!!!
-	liSettings.addEventListener("click", function() {
-		console.log('click event: liSettings');
-		window.location.href = "settings.html";
-	});
+        var options = {
+          timeout: 3, // timeout of 3s
+          onSuccess: function() {
+            // if mqtt is connected
+            console.log("mqtt connected");
 
-	//another one!!!!!
-	liOffers.addEventListener("click", function() {
-		console.log('click event: liOffers');
-		window.location.href = "offers.html";
-	});
+            console.log("IndicatorValue = " + indicatorValue);
+            // console logging the indicator value that is recieved and displayed
 
-	//and another one!!!!! (credits DJ khaled)
-	setInterval(function(client) {
-		indicatorValue = parseInt(Math.random() * 200);
-		activityDisplay.innerHTML = indicatorValue;
-	}, 2000);
-}());
+            msg = new Paho.MQTT.Message(
+              JSON.stringify({
+                activityRate: indicatorValue
+              })
+            ); // we are stringifying the mqtt value and storing it in the msg variable
+
+            msg.destinationName = "watch/" + macAddress; // selecting message destination  as watch/blablabla
+            client.send(msg); // mqtt publishes indicator value to server
+          },
+          onFailure: function(message) {
+            // in the event that the message is not sent
+            console.log("Connection failed: " + message.errorMessage);
+          }
+        };
+
+        client.connect(options); // connect to the mqtt client and send data
+
+        client.onConnectionLost = function(responseObject) {
+          // in the event that mqtt connection is lost for any reason
+          console.log("connection lost: " + responseObject.errorMessage);
+        };
+      }
+    });
+  };
+
+  //changing the value of the display in HTML file
+  activityDisplay.innerHTML = indicatorValue;
+
+  //add event listener for going back to prev. page
+  window.addEventListener("tizenhwkey", function(ev) {
+    if (ev.keyName === "back") {
+      var page = document.getElementsByClassName("ui-page-active")[0],
+        pageid = page ? page.id : "";
+      if (pageid === "main") {
+        try {
+          tizen.application.getCurrentApplication().exit();
+        } catch (ignore) {}
+      } else {
+        window.history.back();
+      }
+    }
+  });
+
+  //add more even listener
+  page.addEventListener("pagebeforeshow", function(e) {
+    var list;
+
+    elScroller = page.querySelector(".ui-scroller");
+    if (elScroller) {
+      list = elScroller.querySelector(".ui-listview");
+    }
+
+    if (elScroller && list) {
+      listHelper = tau.helper.SnapListStyle.create(list, {
+        animate: "scale"
+      });
+
+      elScroller.setAttribute("tizen-circular-scrollbar", "");
+    }
+  });
+
+  //another one!!!!!
+  page.addEventListener("pagebeforehide", function(e) {
+    if (listHelper) {
+      listHelper.destroy();
+
+      listHelper = null;
+
+      if (elScroller) {
+        elScroller.removeAttribute("tizen-circular-scrollbar");
+      }
+    }
+  });
+
+  //another one!!!!!
+  liSettings.addEventListener("click", function() {
+    console.log("click event: liSettings");
+    window.location.href = "settings.html";
+  });
+
+  //and another one!!!!! (credits DJ khaled)
+  liOffers.addEventListener("click", function() {
+    console.log("click event: liOffers");
+    window.location.href = "offers.html";
+  });
+
+  //this is used for calculating the sensor values. Unfortunately due to sensors not
+  //working, we decided to throw random values to simulate the sensors
+  setInterval(function(client) {
+    indicatorValue = parseInt(Math.random() * 200);
+    activityDisplay.innerHTML = indicatorValue; // displaying the sensor value every 2s
+  }, 2000);
+})();
