@@ -18,13 +18,13 @@
 <body>
 	<div class="ui-page ui-page-active" id="main">
 		<header class="ui-header">
-			<h2 class="ui-title">Settings</h2>
+			<h2 class="ui-title">Settings</h2> <!-- setting as text heading -->
 		</header>
 
 		<div class="ui-content">
 			<ul class="ui-listview">
 				<li id="btnSensorData" class="li-has-toggle"><label>
-						Sensor Data
+						Sensor Data <!-- sensor data which has a switch which is 1 (if user allows to send data, else 0)-->
 						<div class="ui-toggleswitch">
 							<input type="checkbox" class="ui-switch-input">
 							<div class="ui-switch-button"></div>
@@ -35,9 +35,11 @@
 		</div>
 		<div class="ui-popup-footer ui-bottom-button">
 			<a id="1btnPopup-cancel" href="#" class="ui-btn" data-rel="back">Back</a>
+			<!-- A back button that will lead user back to index.html -->
 		</div>
 
 	</div>
+	<!-- calling the scripts here (just like index.html) -->
 	<script type="text/javascript" src="lib/tau/wearable/js/tau.min.js"></script>
 	<script src="js/settings.js"></script>
 	<script src="js/lowBatteryCheck.js"></script>
