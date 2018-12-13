@@ -1,6 +1,5 @@
 (function() {
-  // attempted to make heart rate work but it failed miserably
-  // tried to control heart rate and change its value but it never worked
+  // attempted to make heart rate sensor work but it failed miserably :(
   var HRMrawsensor = tizen.sensorservice.getDefaultSensor("HRM_RAW");
 
   function onGetSuccessCB(sensorData) {
